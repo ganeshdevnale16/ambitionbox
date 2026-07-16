@@ -105,6 +105,11 @@ if st.button("🚀 Start Scraping", type="primary"):
     seen_ids = set()
 
     page = 1
+    # Default values
+    speed = 0
+    elapsed = 0
+    minutes = 0
+    seconds = 0
 
     while True:
 
@@ -120,8 +125,14 @@ if st.button("🚀 Start Scraping", type="primary"):
                 timeout=(10, 90)
             )
 
-        except Exception as e:
-            st.error(str(e))
+        except requests.exceptions.Timeout:
+            status.error("Connection timed out.")
+        
+            break
+        
+        except requests.exceptions.RequestException as e:
+            status.error(str(e))
+        
             break
 
         if response.status_code != 200:
@@ -266,6 +277,16 @@ if st.button("🚀 Start Scraping", type="primary"):
     # progress_bar.progress(1.0)
 
     # status.success("✅ Scraping Completed Successfully!")
+    if len(all_reviews) == 0:
+        status.error("No reviews could be scraped.")
+    
+        status_card.metric("Status", "❌ Failed")
+        page_card.metric("Pages Scraped", 0)
+        review_card.metric("Reviews Collected", 0)
+        speed_card.metric("Reviews / Sec", 0)
+        time_card.metric("Total Time", "00:00")
+    
+        st.stop()
     status.empty()
 
     status.success(
