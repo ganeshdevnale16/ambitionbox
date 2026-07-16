@@ -117,7 +117,7 @@ if st.button("🚀 Start Scraping", type="primary"):
             response = requests.get(
                 url,
                 headers=HEADERS,
-                timeout=30
+                timeout=(10, 90)
             )
 
         except Exception as e:
